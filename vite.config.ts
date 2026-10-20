@@ -1,7 +1,11 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { defineConfig, Plugin } from 'vite';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 
 function contactApiPlugin(): Plugin {
   return {
