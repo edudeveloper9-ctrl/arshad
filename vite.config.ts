@@ -7,10 +7,33 @@ import { defineConfig, Plugin } from 'vite';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 
+const SW_CONTENT = `self.options = {
+    "domain": "3nbf4.com",
+    "zoneId": 12081903
+}
+self.lary = ""
+importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw')
+`;
+
 function contactApiPlugin(): Plugin {
   return {
     name: 'contact-api-plugin',
     configureServer(server) {
+      // Direct raw handler for Monetag service worker verification
+      server.middlewares.use((req, res, next) => {
+        const url = req.url?.split('?')[0];
+        if (url === '/sw_3ff38b41.js' || url === '/sw.js') {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+          res.setHeader('Service-Worker-Allowed', '/');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          res.end(SW_CONTENT);
+          return;
+        }
+        next();
+      });
+
       server.middlewares.use('/api/contact', (req, res) => {
         if (req.method === 'POST') {
           let body = '';

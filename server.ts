@@ -51,6 +51,23 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+const SW_RAW_CONTENT = `self.options = {
+    "domain": "3nbf4.com",
+    "zoneId": 12081903
+}
+self.lary = ""
+importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw')
+`;
+
+// Service Worker endpoints for Monetag verification
+app.get(['/sw_3ff38b41.js', '/sw.js'], (_req, res) => {
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.status(200).send(SW_RAW_CONTENT);
+});
+
 // Serve static build if in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'dist')));
